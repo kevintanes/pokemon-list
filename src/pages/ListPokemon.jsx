@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardBody, CardFooter, CardHeader, SimpleGrid, Heading, Img, Stack, Text, useToken, Skeleton } from '@chakra-ui/react';
+import { Box, Button, Card, CardBody, CardFooter, CardHeader, SimpleGrid, Heading, Img, Stack, Text, useToken, Skeleton, useToast } from '@chakra-ui/react';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
@@ -12,6 +12,7 @@ function ListPokemon() {
 
     const [isLoad, setIsLoad] = React.useState(false)
     const navigate = useNavigate();
+    const toast = useToast();
 
     setTimeout(() => {
         setIsLoad(true)
@@ -19,7 +20,7 @@ function ListPokemon() {
 
     const backgroundColor = useToken('colors', ["#0e1f40"]);
 
-    const { data, fetchNextPage, isFetching, hasNextPage, isLoading } = useInfiniteQuery({
+    const { data, fetchNextPage, hasNextPage, isError: isErrorInfinite } = useInfiniteQuery({
         queryKey: ["pokemons"],
         queryFn: async ({ pageParam = 1 }) => {
             const { data } = await axios.get(`https://pokeapi.co/api/v2/pokemon?limit=10&offset=${(pageParam - 1) * 10}`)
@@ -55,7 +56,7 @@ function ListPokemon() {
     const min = 1;
     const max = 1000;
     const random = Math.floor(Math.random() * (max - min + 1)) + min;
-    const { data: randomPokemon } = useQuery({
+    const { data: randomPokemon, isError: isErrorRandomPokemon } = useQuery({
         queryKey: ["random-pokemons"],
         queryFn: async () => {
             const { data } = await axios.get(`https://pokeapi.co/api/v2/pokemon/${random}`);
@@ -107,8 +108,24 @@ function ListPokemon() {
         </Card>
     }
 
+
+
     return (
         <Box mx={4} pt="6">
+            {
+                isErrorInfinite ? toast({
+                    title: "Error",
+                    status: "error"
+                }) : null
+            }
+
+            {
+                isErrorRandomPokemon ? toast({
+                    title: "Error",
+                    status: "error"
+                }) : null
+            }
+
             <Box>
                 <Text fontSize={"3xl"}>
                     Destaque
