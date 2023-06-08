@@ -4,12 +4,13 @@ const favoriteSlice = createSlice({
     name: "favorite",
 
     initialState: {
-        length: 0
+        length: 0,
     },
 
     reducers: {
         favoriteAction: (state, action) => {
             state.length = action.payload;
+            console.log(`action`, action);
         },
         favoriteEmpty: (state, action) => {
             state.length = 0

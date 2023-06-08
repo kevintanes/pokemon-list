@@ -7,18 +7,21 @@ import axios from "axios";
 import InfiniteScroll from 'react-infinite-scroller';
 import "./ListPokemon.css"
 import { useNavigate } from 'react-router-dom';
+import { addDoc, collection, getDocs, query, where, deleteDoc, doc } from 'firebase/firestore';
+import { db } from '../lib/init-firebase';
+import { useDispatch } from 'react-redux';
+import { favoriteAction } from '../reducers/favorite';
 
-function ListPokemon() {
+function ListPokemon(props) {
 
-    const [isLoad, setIsLoad] = React.useState(false)
+    const backgroundColor = useToken('colors', ["#0e1f40"]);
+    const [isLoad, setIsLoad] = React.useState(false);
     const navigate = useNavigate();
     const toast = useToast();
 
     setTimeout(() => {
         setIsLoad(true)
-    }, 1000)
-
-    const backgroundColor = useToken('colors', ["#0e1f40"]);
+    }, 1000);
 
     const { data, fetchNextPage, hasNextPage, isError: isErrorInfinite } = useInfiniteQuery({
         queryKey: ["pokemons"],
@@ -38,7 +41,7 @@ function ListPokemon() {
 
             return nextPage
         }
-    })
+    });
 
     const printPokemonList = () => {
         return data?.pages.map((val) => {
@@ -47,11 +50,13 @@ function ListPokemon() {
                     <CardList
                         name={value?.name}
                         image={value?.sprites.other.dream_world.front_default}
+                        like={likePokemon}
+                        allFavorite={props.favorite}
                     />
                 </Skeleton>
             })
         })
-    }
+    };
 
     const min = 1;
     const max = 1000;
@@ -63,6 +68,10 @@ function ListPokemon() {
 
             return data;
         }
+    });
+
+    const filter = props.favorite.filter((val) => {
+        return val.data.name == randomPokemon?.name
     })
 
     const printRandomPokemon = () => {
@@ -87,12 +96,14 @@ function ListPokemon() {
                     </Text>
                 </CardBody>
                 <CardFooter justifyContent={"end"}>
+                    
                     <Button
-                        leftIcon={<AiOutlineHeart />}
+                        leftIcon={filter.length > 0 ?<AiFillHeart /> : <AiOutlineHeart />  }
                         bgColor="transparent"
                         textColor={"white"}
                         variant="unstyled"
                         fontSize={"xl"}
+                        onClick={() => likePokemon(randomPokemon?.name)}
                     />
                     <Button
                         bgColor={"orange.400"}
@@ -106,8 +117,38 @@ function ListPokemon() {
                 </CardFooter>
             </Stack>
         </Card>
-    }
+    };
 
+    const likePokemon = async (name,) => {
+        try {
+            const favoritePokemonRef1 = query(collection(db, "favorite"), where("name", "==", name));
+            const response = await getDocs(favoritePokemonRef1);
+            const favoritePokemon = response.docs.map((val) => ({
+                data: val.data(),
+                id: val.id,
+            }));
+            // console.log(`response`, response);
+            console.log("favoritePokemon", favoritePokemon);
+
+            if (favoritePokemon.length) {
+                deleteDoc(doc(db, "favorite", favoritePokemon[0].id))
+                    .then(() => console.log("deleted"))
+                    .catch(error => console.log(error.message))
+            } else {
+                const favoritePokemonRef2 = collection(db, "favorite")
+                addDoc(favoritePokemonRef2, { name }).then(response => {
+                    console.log(response.id);
+                    props.getFavoritePokemon();
+                }).catch(error => {
+                    console.log(error);
+                })
+            }
+        } catch (error) {
+            console.log(error);
+        } finally {
+            props.getFavoritePokemon();
+        }
+    }
 
 
     return (

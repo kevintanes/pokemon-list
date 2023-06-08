@@ -9,6 +9,10 @@ function CardList(props) {
     const navigate = useNavigate();
     const backgroundColor = useToken('colors', ["#0e1f40"]);
 
+    const filter = props.allFavorite.filter((val) => {
+        return val.data.name == props.name
+    })
+
     return (
         <Card bgColor={backgroundColor} textAlign={"center"} maxW={"md"}>
             <CardBody
@@ -30,7 +34,12 @@ function CardList(props) {
                 <Box mx="auto" w={"24"} bgColor="purple.600" textColor={"white"} borderRadius="full" fontSize={"2xl"} >
                     <Flex justifyContent="space-evenly" alignItems={"center"} my="4px">
                         <Text as={"button"}>
-                            <AiOutlineHeart />
+                            {
+                                filter.length > 0 ?
+                                    <AiFillHeart onClick={() => props.like(props.name)} /> :
+                                    <AiOutlineHeart onClick={() => props.like(props.name)} />
+                            }
+
                         </Text>
                         <Text as={"button"}>
                             <AiOutlineInfoCircle onClick={() => navigate(`details/${props.name}`)} />

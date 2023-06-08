@@ -1,12 +1,15 @@
-import { Box, Button, Flex, Text, useToken } from '@chakra-ui/react';
+import { Box, Button, Circle, Flex, Text, useToken } from '@chakra-ui/react';
 import React from 'react';
 import { TbBookmark, TbPokeball } from "react-icons/tb";
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 function Footer() {
 
     const backgroundColor = useToken('colors', ["#0e1f40"])
     const navigate = useNavigate();
+
+    const totalFavorite = useSelector((state) => state.favoriteReducer.length);
 
     return (
         <Box
@@ -34,6 +37,14 @@ function Footer() {
                 <Button bgColor={backgroundColor} onClick={() => navigate("/favorite")} _hover _active={false}>
                     <Flex flexDirection={"column"} alignItems="center" textColor={"white"}>
                         <TbBookmark fontSize={"30px"} />
+                        {
+                            totalFavorite == 0 ? null :
+                                <Circle fontSize={"xs"} minW={"4"} minH="4" bgColor={"red.500"} pos="absolute" top={"-2"} right={"7"}>
+                                    {
+                                        totalFavorite
+                                    }
+                                </Circle>
+                        }
                         <Text>
                             Favorite
                         </Text>
@@ -41,6 +52,7 @@ function Footer() {
                 </Button>
             </Flex>
         </Box>
+
     );
 }
 
