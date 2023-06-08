@@ -1,0 +1,5 @@
+.infinite {
+    display: grid;
+    grid-template-columns: 162px 162px;
+    grid-gap: 17px;
+}
