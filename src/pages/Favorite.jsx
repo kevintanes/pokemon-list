@@ -1,5 +1,4 @@
-import { Box, Button, Card, CardBody, CardFooter, CardHeader, Divider, Heading, Img, Stack, Text, useToken } from '@chakra-ui/react';
-import { useQuery } from '@tanstack/react-query';
+import { Box, Button, Card, CardBody, CardFooter, Divider, Heading, Img, Skeleton, Stack, Text, useToken } from '@chakra-ui/react';
 import axios from 'axios';
 import { addDoc, collection, getDocs, query, where, deleteDoc, doc } from 'firebase/firestore';
 import React from 'react';
@@ -28,12 +27,17 @@ function Favorite(props) {
         }
     };
 
+    const [isLoad, setIsLoad] = React.useState(false)
+    setTimeout(() => {
+        setIsLoad(true)
+    }, 1000)
+
+
     React.useEffect(() => {
         getFavoritePokemon()
     }, [])
 
     const [allFavorite, setAllFavorite] = React.useState([])
-    const [stop, setStop] = React.useState(true);
 
     React.useEffect(() => {
         const getPokemonFavorite = async () => {
@@ -53,8 +57,6 @@ function Favorite(props) {
         }
     }, [favoriteList]);
 
-    console.log("allFavorite", allFavorite);
-
     const likePokemon = async (name) => {
         try {
             const favoritePokemonRef1 = query(collection(db, "favorite"), where("name", "==", name));
@@ -63,8 +65,6 @@ function Favorite(props) {
                 data: val.data(),
                 id: val.id,
             }));
-            // console.log(`response`, response);
-            console.log("favoritePokemon", favoritePokemon);
 
             if (favoritePokemon.length) {
                 deleteDoc(doc(db, "favorite", favoritePokemon[0].id))
@@ -98,23 +98,24 @@ function Favorite(props) {
                 overflow='hidden'
                 variant='outline'
                 shadow={"xl"}
+                mb="1"
             >
                 <Img
                     src={val?.sprites.other.dream_world.front_default}
-                    alt={val?.name}
-                    width={"120px"}
-                    height={"120px"}
+                    alt={val?.name + " Image"}
+                    width={"100px"}
+                    ml="20px"
                 />
-                <Stack direction='row' h='250px' px={"1"} py="2">
+                <Stack direction='row' h='200px' px={"1"} py="2">
                     <Divider orientation='vertical' />
-                    <Box my="-4">
+                    <Box mt="-7">
                         <CardBody>
                             <Heading size={"md"}>{val?.name}</Heading>
-                            <Text>
+                            <Text mt={"2"}>
                                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae
                             </Text>
                         </CardBody>
-                        <CardFooter justifyContent={"end"}>
+                        <CardFooter mt="-4" justifyContent={"end"}>
                             <Button
                                 leftIcon={filter.length > 0 ? <AiFillHeart /> : <AiOutlineHeart />}
                                 bgColor="transparent"
@@ -145,9 +146,11 @@ function Favorite(props) {
             <Heading size={"lg"} my="2">
                 FAVORITE
             </Heading>
-            {
-                printFavoritePokemons()
-            }
+            <Skeleton isLoaded={isLoad}>
+                {
+                    printFavoritePokemons()
+                }
+            </Skeleton>
             <Text mt={"4"} textAlign={"center"} fontSize={"2xl"}>
                 Voce tem {allFavorite.length} pokemon favorito
             </Text>

@@ -38,8 +38,6 @@ function Details(props) {
                 data: val.data(),
                 id: val.id,
             }));
-            // console.log(`response`, response);
-            console.log("favoritePokemon", favoritePokemon);
 
             if (favoritePokemon.length) {
                 deleteDoc(doc(db, "favorite", favoritePokemon[0].id))
@@ -91,19 +89,19 @@ function Details(props) {
                     <Img
                         src={data?.sprites.other.dream_world.front_default}
                         alt={data?.name + " image"}
-                        width={"120px"}
+                        width={"100px"}
                         ml="20px"
                     />
-                    <Stack direction='row' h='250px' px={"1"} py="2">
+                    <Stack direction='row' h='200px' px={"1"} py="2">
                         <Divider orientation='vertical' />
-                        <Box my="-4">
+                        <Box my="-7">
                             <CardBody>
                                 <Heading size={"md"}>{data?.name}</Heading>
                                 <Text mt={"2"}>
                                     Lorem ipsum dolor sit amet consectetur adipisicing elit.
                                 </Text>
                             </CardBody>
-                            <CardFooter justifyContent={"end"}>
+                            <CardFooter mt="-4" justifyContent={"end"}>
                                 <Button
                                     leftIcon={filter.length > 0 ? <AiFillHeart /> : <AiOutlineHeart />}
                                     bgColor="transparent"

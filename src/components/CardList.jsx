@@ -1,5 +1,4 @@
-import { Box, Button, Card, CardBody, CardFooter, Flex, Img, Text, useToken } from '@chakra-ui/react';
-import { useQuery } from '@tanstack/react-query';
+import { Box, Card, CardBody, CardFooter, Flex, Img, Text, useToken } from '@chakra-ui/react';
 import React from 'react';
 import { AiFillHeart, AiOutlineHeart, AiOutlineInfoCircle } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";

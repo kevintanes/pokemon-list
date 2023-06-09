@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardBody, CardFooter, CardHeader, SimpleGrid, Heading, Img, Stack, Text, useToken, Skeleton, useToast } from '@chakra-ui/react';
+import { Box, Button, Card, CardBody, CardFooter, Heading, Img, Stack, Text, useToken, Skeleton, useToast } from '@chakra-ui/react';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
@@ -9,8 +9,6 @@ import "./ListPokemon.css"
 import { useNavigate } from 'react-router-dom';
 import { addDoc, collection, getDocs, query, where, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../lib/init-firebase';
-import { useDispatch } from 'react-redux';
-import { favoriteAction } from '../reducers/favorite';
 
 function ListPokemon(props) {
 
@@ -85,7 +83,7 @@ function ListPokemon(props) {
             <Img
                 src={randomPokemon?.sprites.other.dream_world.front_default}
                 alt={randomPokemon?.name + " Image"}
-                width={"120px"}
+                width={"100px"}
                 ml="20px"
             />
             <Stack w={"full"}>
@@ -127,8 +125,6 @@ function ListPokemon(props) {
                 data: val.data(),
                 id: val.id,
             }));
-            // console.log(`response`, response);
-            console.log("favoritePokemon", favoritePokemon);
 
             if (favoritePokemon.length) {
                 deleteDoc(doc(db, "favorite", favoritePokemon[0].id))
@@ -137,7 +133,6 @@ function ListPokemon(props) {
             } else {
                 const favoritePokemonRef2 = collection(db, "favorite")
                 addDoc(favoritePokemonRef2, { name }).then(response => {
-                    console.log(response.id);
                     props.getFavoritePokemon();
                 }).catch(error => {
                     console.log(error);
